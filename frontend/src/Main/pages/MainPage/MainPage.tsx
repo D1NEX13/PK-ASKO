@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
+import Slider from './components/Slider'
 
 function MainPage(): ReactNode {
   return (
     <>
-      <div> YoungRussia</div>
+      <Slider />
+      <div>YoungRussia</div>
     </>
   )
 }
