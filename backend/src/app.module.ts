@@ -6,6 +6,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { CategoriesModule } from './categories/categories.module';
+import { CartModule } from './cart/cart.module';
+import { CertificatesModule } from './certificates/certificates.module';
+import { ChatModule } from './chat/chat.module';
+import { MachinesModule } from './machines/machines.module';
+import { OrdersModule } from './orders/orders.module';
+import { PostsModule } from './posts/posts.module';
+import { QuestionsModule } from './questions/questions.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -26,6 +35,15 @@ import { UsersModule } from './users/users.module';
     ProductsModule,
     AuthModule,
     UsersModule,
+    CategoriesModule,
+    CartModule,
+    CertificatesModule,
+    ChatModule,
+    MachinesModule,
+    OrdersModule,
+    PostsModule,
+    QuestionsModule,
+    ServicesModule,
     
   ],
   controllers: [AppController],
