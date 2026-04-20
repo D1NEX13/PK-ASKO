@@ -1,23 +1,27 @@
 @use '../styles/variables' as *;
 
-.app-shell {
+.app-layout.ant-layout {
   min-height: 100vh;
+  background: transparent;
+}
+
+.app-content.ant-layout-content {
   display: grid;
-  place-items: center;
+  place-items: start center;
   padding: 24px;
 }
 
-.welcome-card {
-  width: min(640px, 100%);
+.app-content__inner {
+  width: min(1080px, 100%);
+  border-radius: 14px;
   box-shadow: $shadow-soft;
-}
-
-.title.ant-typography {
-  margin-bottom: 0;
-}
-
-.page-content {
-  padding: 12px;
-  border-radius: 10px;
   background-color: #ffffff;
+  padding: 24px;
+}
+
+.app-footer.ant-layout-footer {
+  text-align: center;
+  color: #4f5d75;
+  background: transparent;
+  padding-top: 4px;
 }
