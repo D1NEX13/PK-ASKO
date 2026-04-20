@@ -1,9 +1,35 @@
 import { Outlet } from 'react-router-dom'
 import './App.scss'
 import { type ReactNode } from 'react'
+import Header from '../Shared/Header/Header'
+import { ConfigProvider, Layout } from 'antd'
+
+const { Content, Footer } = Layout
 
 function App(): ReactNode {
-  return <Outlet />
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#F97316',
+          colorBgLayout: '#F4F7F8',
+          colorText: '#1D2730',
+          boxShadow: '0 12px 30px rgba(19, 52, 59, 0.12)',
+          borderRadius: 8,
+        },
+      }}
+    >
+      <Layout className="app-layout">
+        <Header />
+        <Content className="app-content">
+          <div className="app-content__inner">
+            <Outlet />
+          </div>
+        </Content>
+        <Footer className="app-footer">PK-ASKO Frontend</Footer>
+      </Layout>
+    </ConfigProvider>
+  )
 }
 
 export default App
