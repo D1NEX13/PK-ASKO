@@ -5,20 +5,6 @@
   background: transparent;
 }
 
-.app-content.ant-layout-content {
-  display: grid;
-  place-items: start center;
-  padding: 24px;
-}
-
-.app-content__inner {
-  width: min(1080px, 100%);
-  border-radius: 14px;
-  box-shadow: $shadow-soft;
-  background-color: #ffffff;
-  padding: 24px;
-}
-
 .app-footer.ant-layout-footer {
   text-align: center;
   color: #4f5d75;

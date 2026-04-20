@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 import Header from '../Shared/Header/Header'
 import { ConfigProvider, Layout } from 'antd'
 
-const { Content, Footer } = Layout
+const { Footer } = Layout
 
 function App(): ReactNode {
   return (
@@ -21,11 +21,7 @@ function App(): ReactNode {
     >
       <Layout className="app-layout">
         <Header />
-        <Content className="app-content">
-          <div className="app-content__inner">
-            <Outlet />
-          </div>
-        </Content>
+        <Outlet />
         <Footer className="app-footer">PK-ASKO Frontend</Footer>
       </Layout>
     </ConfigProvider>
