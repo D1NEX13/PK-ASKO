@@ -1,8 +1,8 @@
 import { Carousel } from 'antd'
 import type { ReactNode } from 'react'
-import manufacturer1 from '../../../../assets/puctures/manufacture.jpg'
-import manufacturer2 from '../../../../assets/puctures/manufacture2.jpg'
-import manufacturer3 from '../../../../assets/puctures/manufacture3.jpg'
+import manufacturer1 from '../../../../../assets/puctures/manufacture.jpg'
+import manufacturer2 from '../../../../../assets/puctures/manufacture2.jpg'
+import manufacturer3 from '../../../../../assets/puctures/manufacture3.jpg'
 
 function Slider(): ReactNode {
   const contentStyle: React.CSSProperties = {
