@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, Min, IsIn, IsInt } from 'class-validator';
+import { IsOptional, IsString, IsNumber, Min, IsIn, IsInt, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryProductsDto {
@@ -33,11 +33,18 @@ export class QueryProductsDto {
   @IsInt()
   categoryId?: number;
 
-  @ApiPropertyOptional({ description: 'Наличие', enum: ['true', 'false'] })
+  @ApiPropertyOptional({ description: 'Наличие (true – в наличии, false – под заказ)', enum: ['true', 'false'] })
   @IsOptional()
   @IsString()
   @IsIn(['true', 'false'])
   inStock?: string;
+
+    @ApiPropertyOptional({ description: 'Минимальное количество на складе', example: 0 })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(0)
+    minQuantity?: number;
 
   @ApiPropertyOptional({ description: 'Номер страницы', default: 1, example: 1 })
   @IsOptional()
@@ -53,10 +60,10 @@ export class QueryProductsDto {
   @Min(1)
   limit?: number = 12;
 
-  @ApiPropertyOptional({ description: 'Поле для сортировки', enum: ['price', 'name', 'sortOrder', 'createdAt'], default: 'createdAt' })
+  @ApiPropertyOptional({ description: 'Поле для сортировки', enum: ['price', 'name', 'sortOrder', 'createdAt', 'quantity'], default: 'createdAt' })
   @IsOptional()
   @IsString()
-  @IsIn(['price', 'name', 'sortOrder', 'createdAt'])
+  @IsIn(['price', 'name', 'sortOrder', 'createdAt', 'quantity'])
   sortBy?: string = 'createdAt';
 
   @ApiPropertyOptional({ description: 'Порядок сортировки', enum: ['ASC', 'DESC'], default: 'DESC' })
