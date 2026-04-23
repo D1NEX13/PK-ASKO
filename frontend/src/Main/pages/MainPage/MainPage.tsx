@@ -4,6 +4,7 @@ import Catalog from './components/Catalog/Catalog';
 import Title from 'antd/es/typography/Title';
 import './MainPage.scss';
 import { Button } from 'antd';
+import Services from './components/Services/Services';
 
 function MainPage(): ReactNode {
 	return (
@@ -17,7 +18,8 @@ function MainPage(): ReactNode {
 			>
 				Смотреть весь каталог
 			</Button>
-			<div>YoungRussia</div>
+			<Title className="title">Наши услуги</Title>
+			<Services />
 		</>
 	);
 }
