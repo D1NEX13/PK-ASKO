@@ -1,5 +1,5 @@
 import { ShoppingCartOutlined } from '@ant-design/icons';
-import { Card, Divider, Flex, Typography } from 'antd';
+import { Card, Flex, Typography } from 'antd';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Product } from '../../../../../Shared/types/product';
 
@@ -18,8 +18,6 @@ function Catalog(): ReactNode {
 		};
 		fetchProducts();
 	}, []);
-
-	console.log(products);
 
 	return (
 		<Flex
