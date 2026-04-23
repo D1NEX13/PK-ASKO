@@ -40,6 +40,9 @@ export class Product {
   @Column({ default: true })
   inStock: boolean;
 
+  @Column({ default: 0 })
+  quantity: number;
+  
   @Column('simple-array', { nullable: true })
   images: string[];
 

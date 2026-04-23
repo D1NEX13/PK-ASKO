@@ -1,22 +1,25 @@
-import { Controller, Post, Body, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { Public } from './public.decorator';
 import { RegisterDto } from './dto/register.dto';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService, private usersService: UsersService,) {}
 
   @Post('login')
-  @Public()
-  async login(@Body() loginDto: { email: string; password: string }) {
+    @Public()
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Вход в систему' })
+    @ApiBody({ type: LoginDto })  
+    async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
-      throw new UnauthorizedException('Неверный email или пароль');
-    }
+    if (!user) throw new UnauthorizedException('Неверный email или пароль');
     return this.authService.login(user);
-  }
+    }
 
   @Post('register')
   @Public()
