@@ -3,7 +3,10 @@ import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { Public } from '../auth/public.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('cart')
 @Controller('cart')
 export class CartController {
   constructor(private cartService: CartService) {}
