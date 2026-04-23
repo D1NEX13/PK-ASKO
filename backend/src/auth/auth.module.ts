@@ -8,6 +8,10 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { User } from '../users/user.entity';
+import { PasswordResetToken } from './password-reset-token.entity';
+import { BlacklistedToken } from './blacklisted-token.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -21,6 +25,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
         signOptions: { expiresIn: '7d' }, 
       }),
     }),
+    TypeOrmModule.forFeature([User, PasswordResetToken, BlacklistedToken]),
   ],
   providers: [AuthService, JwtStrategy,
     {

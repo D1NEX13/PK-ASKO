@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -15,9 +16,11 @@ import { OrdersModule } from './orders/orders.module';
 import { PostsModule } from './posts/posts.module';
 import { QuestionsModule } from './questions/questions.module';
 import { ServicesModule } from './services/services.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }),
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -32,6 +35,24 @@ import { ServicesModule } from './services/services.module';
         synchronize: process.env.NODE_ENV !== 'production',
       }),
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('MAIL_HOST'),
+          port: configService.get<number>('MAIL_PORT'),
+          secure: configService.get('MAIL_SECURE') === 'true',
+          auth: {
+            user: configService.get('MAIL_USER'),
+            pass: configService.get('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `"Support" <${configService.get('MAIL_USER')}>`,
+        },
+      }),
+    }),
     ProductsModule,
     AuthModule,
     UsersModule,
@@ -44,7 +65,7 @@ import { ServicesModule } from './services/services.module';
     PostsModule,
     QuestionsModule,
     ServicesModule,
-    
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

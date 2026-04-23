@@ -7,17 +7,17 @@ export class PasswordResetToken {
   id: number;
 
   @Column()
-  userId: number;
-
-  @Column({ unique: true })
   token: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  user: User;
+
+  @Column()
+  userId: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @Column({ type: 'timestamp' })
   expiresAt: Date;
-
-  @ManyToOne(() => User)
-  user: User; 
 }
