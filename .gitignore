@@ -111,7 +111,7 @@ sketch
 
 *.sqlite          
 *.db              
-uploads/          
+#uploads/          
 temp/             
 *.local          
 
