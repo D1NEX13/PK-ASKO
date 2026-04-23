@@ -4,11 +4,13 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Public } from '../auth/public.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createCategoryDto: CreateCategoryDto) {

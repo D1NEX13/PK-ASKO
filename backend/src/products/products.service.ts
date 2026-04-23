@@ -1,29 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ConflictException } from '@nestjs/common';
 import { QueryProductsDto } from './dto/query-products.dto';
+import { Category } from '../categories/category.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
+    @InjectRepository(Category) 
+    private categoriesRepository: Repository<Category>,
   ) {}
-
-  async create(createProductDto: CreateProductDto): Promise<Product> {
     
-    const existingSlug = await this.productsRepository.findOne({ where: { slug: createProductDto.slug } });
-    if (existingSlug) throw new ConflictException('Товар с таким slug уже существует');
-    const existingArticle = await this.productsRepository.findOne({ where: { article: createProductDto.article } });
-    if (existingArticle) throw new ConflictException('Товар с таким артикулом уже существует');
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+  
+  const existingSlug = await this.productsRepository.findOne({ where: { slug: createProductDto.slug } });
+  if (existingSlug) throw new ConflictException('Товар с таким slug уже существует');
 
-    const product = this.productsRepository.create(createProductDto);
-    return this.productsRepository.save(product);
+  const existingArticle = await this.productsRepository.findOne({ where: { article: createProductDto.article } });
+  if (existingArticle) throw new ConflictException('Товар с таким артикулом уже существует');
+
+  let { categoryId, partType, ...rest } = createProductDto;
+
+  if (!categoryId && partType) {
+    const normalized = partType.trim().toLowerCase();
+    const category = await this.categoriesRepository.findOne({
+      where: [
+        { name: ILike(normalized) },
+        { slug: ILike(normalized) }
+      ]
+    });
+    if (category) {
+      categoryId = category.id;
+    } else {
+      throw new NotFoundException(`Категория с именем "${partType}" не найдена. Сначала создайте категорию.`);
+    }
   }
+
+  const product = this.productsRepository.create({ ...rest, partType, categoryId });
+  return this.productsRepository.save(product);
+}
 
   async findAll(query: QueryProductsDto) {
     const { search, minPrice, maxPrice, partType, categoryId, inStock, page, limit, sortBy, order } = query;
