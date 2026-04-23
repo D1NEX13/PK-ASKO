@@ -7,6 +7,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ConflictException } from '@nestjs/common';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { Category } from '../categories/category.entity';
+import { ProductsResponseDto } from './dto/products-response.dto';
 
 @Injectable()
 export class ProductsService {
@@ -46,55 +47,71 @@ export class ProductsService {
   return this.productsRepository.save(product);
 }
 
-  async findAll(query: QueryProductsDto) {
-    const { search, minPrice, maxPrice, partType, categoryId, inStock, page, limit, sortBy, order } = query;
+  async findAll(query: QueryProductsDto): Promise<ProductsResponseDto> {
+  const {
+    search,
+    minPrice,
+    maxPrice,
+    partType,
+    categoryId,
+    inStock,
+    page = 1,
+    limit = 12,
+    sortBy = 'createdAt',
+    order = 'DESC',
+  } = query;
 
-    const qb = this.productsRepository.createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category');
+  const qb = this.productsRepository.createQueryBuilder('product')
+    .leftJoinAndSelect('product.category', 'category');
 
-    if (search) {
-      qb.andWhere('(product.name ILIKE :search OR product.article ILIKE :search)', { search: `%${search}%` });
-    }
-
-    if (minPrice !== undefined) {
-      qb.andWhere('product.price >= :minPrice', { minPrice });
-    }
-    if (maxPrice !== undefined) {
-      qb.andWhere('product.price <= :maxPrice', { maxPrice });
-    }
-
-    if (partType) {
-      qb.andWhere('product.partType = :partType', { partType });
-    }
-
-    if (categoryId) {
-      qb.andWhere('product.categoryId = :categoryId', { categoryId });
-    }
-
-    if (inStock === 'true') {
-      qb.andWhere('product.inStock = true');
-    } else if (inStock === 'false') {
-      qb.andWhere('product.inStock = false');
-    }
-
-    const allowedSortFields = ['price', 'name', 'sortOrder', 'createdAt'];
-    const orderField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
-    qb.orderBy(`product.${orderField}`, order === 'ASC' ? 'ASC' : 'DESC');
-
-    const take = limit;
-    const skip = (page - 1) * limit;
-    qb.take(take).skip(skip);
-
-    const [items, total] = await qb.getManyAndCount();
-
-    return {
-      items,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+  // Поиск по name или article
+  if (search) {
+    qb.andWhere('(product.name ILIKE :search OR product.article ILIKE :search)', { search: `%${search}%` });
   }
+
+  // Фильтр по цене
+  if (minPrice !== undefined) {
+    qb.andWhere('product.price >= :minPrice', { minPrice });
+  }
+  if (maxPrice !== undefined) {
+    qb.andWhere('product.price <= :maxPrice', { maxPrice });
+  }
+
+  // Фильтр по типу детали
+  if (partType) {
+    qb.andWhere('product.partType = :partType', { partType });
+  }
+
+  // Фильтр по категории
+  if (categoryId) {
+    qb.andWhere('product.categoryId = :categoryId', { categoryId });
+  }
+
+  // Фильтр по наличию (булево)
+  if (inStock !== undefined) {
+    qb.andWhere('product.inStock = :inStock', { inStock });
+  }
+
+  // Сортировка
+  const allowedSortFields = ['price', 'name', 'sortOrder', 'createdAt', 'quantity'];
+  const orderField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+  qb.orderBy(`product.${orderField}`, order === 'ASC' ? 'ASC' : 'DESC');
+
+  // Пагинация
+  const take = limit;
+  const skip = (page - 1) * limit;
+  qb.take(take).skip(skip);
+
+  const [items, total] = await qb.getManyAndCount();
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
 
   async findOne(id: number): Promise<Product> {
     const product = await this.productsRepository.findOne({

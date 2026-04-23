@@ -11,6 +11,7 @@ class ProductListItemDto {
   @ApiProperty({ type: [String], nullable: true }) images?: string[];
   @ApiProperty({ nullable: true }) partType?: string;
   @ApiProperty() createdAt: Date;
+  @ApiProperty({ nullable: true }) quantity?: number;
 }
 
 export class ProductsResponseDto {
