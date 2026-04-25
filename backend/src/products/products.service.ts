@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Product } from './product.entity';
@@ -64,12 +64,10 @@ export class ProductsService {
   const qb = this.productsRepository.createQueryBuilder('product')
     .leftJoinAndSelect('product.category', 'category');
 
-  // Поиск по name или article
   if (search) {
     qb.andWhere('(product.name ILIKE :search OR product.article ILIKE :search)', { search: `%${search}%` });
   }
 
-  // Фильтр по цене
   if (minPrice !== undefined) {
     qb.andWhere('product.price >= :minPrice', { minPrice });
   }
@@ -77,27 +75,22 @@ export class ProductsService {
     qb.andWhere('product.price <= :maxPrice', { maxPrice });
   }
 
-  // Фильтр по типу детали
   if (partType) {
     qb.andWhere('product.partType = :partType', { partType });
   }
 
-  // Фильтр по категории
   if (categoryId) {
     qb.andWhere('product.categoryId = :categoryId', { categoryId });
   }
 
-  // Фильтр по наличию (булево)
   if (inStock !== undefined) {
     qb.andWhere('product.inStock = :inStock', { inStock });
   }
 
-  // Сортировка
   const allowedSortFields = ['price', 'name', 'sortOrder', 'createdAt', 'quantity'];
   const orderField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
   qb.orderBy(`product.${orderField}`, order === 'ASC' ? 'ASC' : 'DESC');
 
-  // Пагинация
   const take = limit;
   const skip = (page - 1) * limit;
   qb.take(take).skip(skip);
@@ -149,4 +142,23 @@ export class ProductsService {
         .getRawMany();
     return result.map(r => r.partType);
     }
+
+  async checkStock(productId: number, requestedQty: number): Promise<void> {
+  const product = await this.productsRepository.findOne({ where: { id: productId } });
+  if (!product) throw new NotFoundException(`Product ${productId} not found`);
+  if (product.quantity < requestedQty) {
+    throw new BadRequestException(
+      `Недостаточно товара на складе. Доступно: ${product.quantity}, запрошено: ${requestedQty}`
+    );
+  }
+    }
+
+    async reserveStock(productId: number, quantityToReserve: number): Promise<void> {
+    await this.productsRepository.decrement({ id: productId }, 'quantity', quantityToReserve);
+    
+    const product = await this.productsRepository.findOne({ where: { id: productId } });
+    if (product && product.quantity === 0 && product.inStock !== false) {
+        await this.productsRepository.update(productId, { inStock: false });
+    }
+    } 
 }

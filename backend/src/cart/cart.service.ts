@@ -55,7 +55,7 @@ export class CartService {
 
   async getCart(userId?: number, guestId?: string): Promise<Cart> {
     const cart = await this.getOrCreateCart(userId, guestId);
-    // загружаем связи с продуктами
+    
     const cartWithProducts = await this.cartRepository.findOne({
       where: { id: cart.id },
       relations: ['items', 'items.product'],
@@ -80,8 +80,15 @@ export class CartService {
     return this.getCart(userId, guestId);
   }
 
-  async clearCart(userId?: number, guestId?: string): Promise<void> {
-    const cart = await this.getOrCreateCart(userId, guestId);
+  async clearCart(userId: number | null, guestId: string | null): Promise<void> {
+  let cart = null;
+  if (userId) {
+    cart = await this.cartRepository.findOne({ where: { userId } });
+  } else if (guestId) {
+    cart = await this.cartRepository.findOne({ where: { guestId } });
+  }
+  if (cart) {
     await this.cartItemRepository.delete({ cartId: cart.id });
+  }
   }
 }
