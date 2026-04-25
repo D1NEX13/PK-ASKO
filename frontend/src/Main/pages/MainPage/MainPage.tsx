@@ -7,6 +7,7 @@ import { Button } from 'antd';
 import Services from './components/Services/Services';
 import About from './components/About/About';
 import FAQ from './components/FAQ/FAQ';
+import Map from './components/Map/Map';
 
 function MainPage(): ReactNode {
 	return (
@@ -26,6 +27,8 @@ function MainPage(): ReactNode {
 			<About />
 			<Title className="title">ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ</Title>
 			<FAQ />
+			<Title className="title">Наше местоположение</Title>
+			<Map />
 		</>
 	);
 }
