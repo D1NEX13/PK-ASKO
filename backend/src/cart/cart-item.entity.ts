@@ -9,11 +9,13 @@ export class CartItem {
 
   @ManyToOne(() => Cart, cart => cart.items)
   cart: Cart;
+  
   @Column()
   cartId: number;
 
   @ManyToOne(() => Product)
   product: Product;
+
   @Column()
   productId: number;
 

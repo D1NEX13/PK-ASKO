@@ -26,6 +26,9 @@ export class AuthController {
     if (!user) {
         throw new UnauthorizedException('Неверный email или пароль');
     }
+    if (loginDto.guestId) {
+        await this.authService.mergeGuestCart(user.id, loginDto.guestId);
+    }
     return this.authService.login(user);
     }
 

@@ -10,7 +10,9 @@ import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
+import { CartService } from '../cart/cart.service';
 
+CartService
 @Injectable()
 export class AuthService {
     constructor(
@@ -23,6 +25,7 @@ export class AuthService {
     private blacklistRepo: Repository<BlacklistedToken>,
     private jwtService: JwtService,
     private mailerService: MailerService,
+    private cartService: CartService, 
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -132,5 +135,28 @@ export class AuthService {
     user.password = await bcrypt.hash(newPassword, 10);
     await this.userRepo.save(user);
     await this.resetTokenRepo.delete({ id: resetToken.id });
+    }
+
+    async mergeGuestCart(userId: number, guestId: string): Promise<void> {
+  
+    const guestCart = await this.cartService.getCartByGuestId(guestId); 
+    if (!guestCart || !guestCart.items.length) return;
+
+    let userCart = await this.cartService.getCartByUserId(userId);
+    if (!userCart) {
+        userCart = await this.cartService.createUserCart(userId);
+    }
+
+    for (const guestItem of guestCart.items) {
+        const existingItem = userCart.items.find(item => item.productId === guestItem.productId);
+        if (existingItem) {
+        existingItem.quantity += guestItem.quantity;
+        await this.cartService.updateCartItem(userId, undefined, existingItem.id, { quantity: existingItem.quantity });
+        } else {
+        await this.cartService.addToCart(userId, undefined, { productId: guestItem.productId, quantity: guestItem.quantity });
+        }
+    }
+
+    await this.cartService.clearCart(null, guestId);
     }
 }

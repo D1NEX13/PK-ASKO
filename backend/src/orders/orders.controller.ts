@@ -6,13 +6,19 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CreateFromCartDto } from './dto/create-from-cart.dto';
 import { Public } from '../auth/public.decorator';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('orders')
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class OrdersController {
-  constructor(private ordersService: OrdersService) {}
+  constructor(
+    private ordersService: OrdersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Список заказов текущего пользователя с пагинацией (по 10) и фильтром по статусу' })
@@ -63,12 +69,28 @@ export class OrdersController {
     }
 
     @Post('from-cart')
-    @ApiOperation({ summary: 'Создать заказ из текущей корзины' })
-    @ApiBody({ type: CreateFromCartDto })
-    async createOrderFromCart(@Req() req, @Body() dto: CreateFromCartDto, @Query('guestId') guestId?: string) {
-    const userId = req.user?.userId;
-    return this.ordersService.createOrderFromCart(userId, guestId, dto);
+  @Public()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Создать заказ из текущей корзины (авторизованный или гость)' })
+  @ApiBody({ type: CreateFromCartDto })
+  @ApiQuery({ name: 'guestId', required: false, description: 'UUID гостя (только если не авторизован)' })
+  async createOrderFromCart(@Req() req, @Body() dto: CreateFromCartDto, @Query('guestId') guestId?: string) {
+    let userId: number | undefined = undefined;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const payload = this.jwtService.verify(token, { secret: this.configService.get('JWT_SECRET') });
+        userId = payload.sub;
+      } catch (error) {
+       
+      }
     }
+    if (!userId && !guestId) {
+      throw new BadRequestException('Either authorization token or guestId must be provided');
+    }
+    return this.ordersService.createOrderFromCart(userId, guestId, dto);
+  }
 
     @Post('webhook/payment')
     @Public() 

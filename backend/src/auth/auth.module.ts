@@ -12,11 +12,13 @@ import { User } from '../users/user.entity';
 import { PasswordResetToken } from './password-reset-token.entity';
 import { BlacklistedToken } from './blacklisted-token.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CartModule } from '../cart/cart.module';
 
 @Module({
   imports: [
     UsersModule, 
     PassportModule,
+    CartModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
