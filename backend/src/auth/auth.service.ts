@@ -42,9 +42,17 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const { email, password, firstName, lastName, phone } = registerDto;
+    const { email, password, firstName, lastName, phone, companyName } = registerDto;
     const existing = await this.userRepo.findOne({ where: { email } });
     if (existing) throw new ConflictException('Email already exists');
+
+    let baseUsername = email.split('@')[0];
+    let username = baseUsername;
+    let counter = 1;
+    while (await this.userRepo.findOne({ where: { username } })) {
+        username = `${baseUsername}_${counter++}`;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.userRepo.create({
         email,
@@ -52,11 +60,13 @@ export class AuthService {
         firstName,
         lastName,
         phone,
+        companyName,
+        username,
         role: 'customer',
     });
     await this.userRepo.save(newUser);
     const { password: _, ...user } = newUser;
-    return { user, ...await this.login(user) };
+        return { user, ...await this.login(user) };
     }
 
   async logout(token: string): Promise<void> {
