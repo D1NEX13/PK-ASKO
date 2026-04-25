@@ -14,19 +14,25 @@ export class ProfileController {
 
   @Get()
   @ApiOperation({ summary: 'Получить профиль текущего пользователя' })
+  @ApiResponse({ status: 200, description: 'Данные профиля' })
   getProfile(@Req() req) {
     return this.profileService.getProfile(req.user.userId);
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Обновить профиль' })
+  @ApiOperation({ summary: 'Обновить профиль (имя, фамилия, телефон, email)' })
+  @ApiResponse({ status: 200, description: 'Профиль обновлён' })
   updateProfile(@Req() req, @Body() dto: UpdateProfileDto) {
     return this.profileService.updateProfile(req.user.userId, dto);
   }
 
   @Post('change-password')
-  @ApiOperation({ summary: 'Сменить пароль' })
-  changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
-    return this.profileService.changePassword(req.user.userId, dto);
-  }
+    @ApiOperation({ summary: 'Сменить пароль' })
+    @ApiResponse({ status: 200, description: 'Пароль успешно изменён', schema: { example: { message: 'Password changed successfully' } } })
+    @ApiResponse({ status: 401, description: 'Неверный старый пароль' })
+    @ApiResponse({ status: 400, description: 'Новый пароль слишком короткий или не соответствует требованиям' })
+    async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
+    await this.profileService.changePassword(req.user.userId, dto);
+        return { message: 'Пароль успешно изменен!' };
+    }
 }
