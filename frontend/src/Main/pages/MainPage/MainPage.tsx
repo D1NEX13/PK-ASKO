@@ -5,6 +5,7 @@ import Title from 'antd/es/typography/Title';
 import './MainPage.scss';
 import { Button } from 'antd';
 import Services from './components/Services/Services';
+import About from './components/About/About';
 
 function MainPage(): ReactNode {
 	return (
@@ -20,6 +21,8 @@ function MainPage(): ReactNode {
 			</Button>
 			<Title className="title">Наши услуги</Title>
 			<Services />
+			<Title className="title">О компании ПК АСКО</Title>
+			<About />
 		</>
 	);
 }

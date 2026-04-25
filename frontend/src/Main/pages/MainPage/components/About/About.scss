@@ -1,0 +1,33 @@
+.about {
+	padding: 48px 96px 48px 96px;
+}
+.about__content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.about__description {
+	font-size: 18px;
+	line-height: 1.6;
+	width: 80%;
+	margin-bottom: 24px;
+}
+
+.about__description--first {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.about__image {
+	flex: 1;
+}
+
+.about__card {
+	position: relative;
+	bottom: 16%;
+	left: -20px;
+	width: 200px;
+	box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+}

@@ -39,7 +39,10 @@ function Services(): ReactNode {
 					Подробнее <RightOutlined />
 				</Typography.Link>
 			</Card>
-			<Card style={{ width: 450 }}>
+			<Card
+				style={{ width: 450 }}
+				hoverable={true}
+			>
 				<Flex
 					className="card__flex"
 					justify="space-between"
@@ -61,7 +64,10 @@ function Services(): ReactNode {
 					Подробнее <RightOutlined />
 				</Typography.Link>
 			</Card>
-			<Card style={{ width: 450 }}>
+			<Card
+				style={{ width: 450 }}
+				hoverable={true}
+			>
 				<Flex
 					className="card__flex"
 					justify="space-between"
