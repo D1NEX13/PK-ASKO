@@ -6,12 +6,13 @@ import './MainPage.scss';
 import { Button } from 'antd';
 import Services from './components/Services/Services';
 import About from './components/About/About';
+import FAQ from './components/FAQ/FAQ';
 
 function MainPage(): ReactNode {
 	return (
 		<>
 			<Slider />
-			<Title className="title">Каталог продукции</Title>
+			<Title className="title">КАТАЛОГ ПРОДУКЦИИ</Title>
 			<Catalog />
 			<Button
 				className="button"
@@ -19,10 +20,12 @@ function MainPage(): ReactNode {
 			>
 				Смотреть весь каталог
 			</Button>
-			<Title className="title">Наши услуги</Title>
+			<Title className="title">НАШИ УСЛУГИ</Title>
 			<Services />
-			<Title className="title">О компании ПК АСКО</Title>
+			<Title className="title">О КОМПАНИИ ПК АСКО</Title>
 			<About />
+			<Title className="title">ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ</Title>
+			<FAQ />
 		</>
 	);
 }
