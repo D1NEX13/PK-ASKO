@@ -36,6 +36,9 @@ export class Order {
   @Column('text', { nullable: true })
   comment: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  statusHistory: Array<{ status: string; date: Date; note?: string }> = [{ status: 'new', date: new Date() }];
+
   @CreateDateColumn()
   createdAt: Date;
 

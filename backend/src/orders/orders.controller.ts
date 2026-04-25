@@ -1,9 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards, Req, Post, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Req, Post, Body, Patch, Delete, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { CreateFromCartDto } from './dto/create-from-cart.dto';
+import { Public } from '../auth/public.decorator';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -58,5 +60,33 @@ export class OrdersController {
     async removeOrder(@Req() req, @Param('id') id: number) {
     
     return this.ordersService.removeOrder(req.user.userId, id);
+    }
+
+    @Post('from-cart')
+    @ApiOperation({ summary: 'Создать заказ из текущей корзины' })
+    @ApiBody({ type: CreateFromCartDto })
+    async createOrderFromCart(@Req() req, @Body() dto: CreateFromCartDto, @Query('guestId') guestId?: string) {
+    const userId = req.user?.userId;
+    return this.ordersService.createOrderFromCart(userId, guestId, dto);
+    }
+
+    @Post('webhook/payment')
+    @Public() 
+    @ApiOperation({ summary: 'Webhook для уведомления об оплате (вызывается платёжной системой)' })
+    async handlePaymentWebhook(@Body() body: any) {
+    const orderId = body.orderId || body.object?.metadata?.order_id;
+    if (!orderId) {
+        throw new BadRequestException('Order ID not provided');
+    }
+    await this.ordersService.updateStatus(orderId, 'paid', undefined, 'Payment received');
+    return { received: true };
+    }
+
+    @Patch(':id/status')
+    @ApiOperation({ summary: 'Изменить статус заказа (админ)' })
+    @ApiBody({ schema: { example: { status: 'processing' } } })
+    async changeStatus(@Param('id') id: number, @Body('status') status: string) {
+    
+    return this.ordersService.updateStatus(id, status);
     }
 }
