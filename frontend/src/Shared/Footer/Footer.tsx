@@ -3,7 +3,6 @@ import {
 	InstagramOutlined,
 	MailOutlined,
 	PhoneOutlined,
-	SendOutlined,
 	WechatWorkOutlined,
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
