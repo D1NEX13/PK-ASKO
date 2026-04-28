@@ -3,7 +3,10 @@ export interface IUser {
 	email: string;
 	firstName: string;
 	lastName: string;
-	phoneNumber: string;
+	phone: string;
 	companyName: string;
+	username: string;
+	createdAt: string;
+	updatedAt: string;
 	role: 'admin' | 'user';
 }
