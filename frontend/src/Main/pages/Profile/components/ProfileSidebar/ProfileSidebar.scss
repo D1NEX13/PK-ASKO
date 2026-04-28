@@ -1,0 +1,27 @@
+:global(.ant-card-head) {
+	padding: 0;
+}
+
+.user-info {
+	display: flex;
+	flex-direction: column;
+
+	padding: 20px;
+}
+
+.orders-count {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 16px 8px 16px;
+}
+
+.orders-label {
+	font-weight: 200;
+}
+
+.orders-number {
+	background-color: #f97316;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
