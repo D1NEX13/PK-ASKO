@@ -8,10 +8,11 @@ import { Order } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { CartModule } from '../cart/cart.module';
 import { ProductsModule } from '../products/products.module';
+import { Product } from '../products/product.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, OrderItem]),
+    TypeOrmModule.forFeature([Order, OrderItem,Product]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

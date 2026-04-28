@@ -8,6 +8,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { CreateFromCartDto } from './dto/create-from-cart.dto';
 import { CartService } from '../cart/cart.service';
 import { ProductsService } from '../products/products.service';
+import { In } from 'typeorm';
+import { Product } from '../products/product.entity';
 
 @Injectable()
 export class OrdersService {
@@ -16,32 +18,59 @@ export class OrdersService {
     private orderRepo: Repository<Order>,
     @InjectRepository(OrderItem)
     private orderItemRepo: Repository<OrderItem>,
+    @InjectRepository(Product)
+    private productRepo: Repository<Product>,
     private cartService: CartService,
     private productsService: ProductsService,
     ) {}
 
   async createOrder(userId: number, dto: CreateOrderDto): Promise<Order> {
-    const totalAmount = dto.items.reduce((sum, item) => sum + (item.priceAtTime * item.quantity), 0);
-    const order = this.orderRepo.create({
-        userId,
-        status: 'new',
-        totalAmount,
-        paymentMethod: dto.paymentMethod,
-        deliveryMethod: dto.deliveryMethod,
-        deliveryAddress: dto.deliveryAddress,
-        deliveryPrice: dto.deliveryPrice,
-        comment: dto.comment,
-    });
-    await this.orderRepo.save(order);
-    const orderItems = dto.items.map(item => this.orderItemRepo.create({
-        orderId: order.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        priceAtTime: item.priceAtTime,
-    }));
-    await this.orderItemRepo.save(orderItems);
-    return this.findOne(userId, order.id);
+  const productIds = dto.items.map(item => item.productId);
+  const products = await this.productRepo.find({ where: { id: In(productIds) } });
+  if (products.length !== productIds.length) {
+    throw new BadRequestException('Одного или нескольких товаров не существует');
+  }
+  const productMap = new Map(products.map(p => [p.id, p]));
+
+  let totalAmount = 0;
+  for (const item of dto.items) {
+    const product = productMap.get(item.productId);
+    if (product.quantity < item.quantity) {
+      throw new BadRequestException(
+        `Недостаточно товара "${product.name}" на складе. Доступно: ${product.quantity}, запрошено: ${item.quantity}`
+      );
     }
+    totalAmount += product.price * item.quantity;
+  }
+
+  const order = this.orderRepo.create({
+    userId,
+    status: 'new',
+    totalAmount,
+    paymentMethod: dto.paymentMethod,
+    deliveryMethod: dto.deliveryMethod,
+    deliveryAddress: dto.deliveryAddress,
+    deliveryPrice: dto.deliveryPrice,
+    comment: dto.comment,
+  });
+  await this.orderRepo.save(order);
+
+  const orderItems = dto.items.map(item => {
+    const product = productMap.get(item.productId);
+    return this.orderItemRepo.create({
+      orderId: order.id,
+      productId: item.productId,
+      quantity: item.quantity,
+      priceAtTime: product.price,
+    });
+  });
+  await this.orderItemRepo.save(orderItems);
+
+  for (const item of dto.items) {
+    await this.productsService.reserveStock(item.productId, item.quantity);
+  }
+  return this.findOne(userId, order.id);
+}
 
     async createOrderFromCart(userId: number | null, guestId: string | null, dto: CreateFromCartDto): Promise<Order> {
     const cart = await this.cartService.getCart(userId, guestId);
