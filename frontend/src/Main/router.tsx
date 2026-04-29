@@ -4,6 +4,7 @@ import MainPage from './pages/MainPage/MainPage';
 import Profile from './pages/Profile/Profile';
 import Auth from './pages/AuthPage/Auth';
 import ProtectedRoute from '../Shared/ProtectedRoute/ProtectedRoute';
+import CatalogPage from './pages/CatalogPage/CatalogPage';
 
 export const router = createBrowserRouter([
 	{
@@ -15,7 +16,11 @@ export const router = createBrowserRouter([
 				element: <MainPage />,
 			},
 			{
-				element: <ProtectedRoute />, // ← обёртка
+				path: 'catalog',
+				element: <CatalogPage />,
+			},
+			{
+				element: <ProtectedRoute />,
 				children: [{ path: 'profile', element: <Profile /> }],
 			},
 		],

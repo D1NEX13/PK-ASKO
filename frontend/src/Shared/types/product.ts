@@ -1,3 +1,10 @@
+export interface IProductsResponse {
+	data: Product[];
+	total: number;
+	page: number;
+	limit: number;
+}
+
 export interface Product {
 	id: number;
 	name: string;
