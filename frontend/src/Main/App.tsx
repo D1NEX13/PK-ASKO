@@ -16,6 +16,7 @@ function App(): ReactNode {
 					boxShadow: '0 12px 30px rgba(19, 52, 59, 0.12)',
 					boxShadowSecondary: '0 8px 24px rgba(0,0,0,0.15)',
 					borderRadius: 8,
+					fontFamily: "'Manrope', sans-serif",
 				},
 			}}
 		>
