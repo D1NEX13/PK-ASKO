@@ -1,31 +1,32 @@
 @use '../../styles/variables' as *;
 
 .app-header {
-  height: 64px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-  gap: 24px;
-  padding-inline: 24px;
-  background: $color-surface;
+	height: 64px;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	align-items: center;
+	gap: 24px;
+	padding-inline: 24px;
+	background: $color-surface;
 }
 
 .app-header__menu.ant-menu {
-  min-width: max-content;
-  display: flex;
-  justify-content: center;
-  background: transparent;
-  border-bottom: none;
+	min-width: max-content;
+	display: flex;
+	justify-content: center;
+	background: transparent;
+	border-bottom: none;
+	font-size: 20px;
 }
 
 .app-header__icons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
 
-  img {
-    width: 24px;
-    height: 24px;
-  }
+	img {
+		width: 28px;
+		height: 28px;
+	}
 }

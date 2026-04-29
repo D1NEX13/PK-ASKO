@@ -32,14 +32,18 @@ const menuItems: MenuProps['items'] = [
 function Header(): ReactNode {
 	return (
 		<Layout.Header className="app-header">
-			<div className="app-header__brand">
+			<Link
+				to="/"
+				className="app-header__brand"
+			>
 				<Typography.Text
 					strong
 					className="app-header__brand-text"
+					style={{ color: '#F97316', fontSize: 24 }}
 				>
 					ПК АСКО
 				</Typography.Text>
-			</div>
+			</Link>
 			<div className="app-header__menu-wrap">
 				<Menu
 					className="app-header__menu"
@@ -56,10 +60,12 @@ function Header(): ReactNode {
 					src={cartIcon}
 					alt="Cart"
 				/>
-				<img
-					src={personIcon}
-					alt="Person"
-				/>
+				<Link to="/profile">
+					<img
+						src={personIcon}
+						alt="Person"
+					/>
+				</Link>
 			</div>
 		</Layout.Header>
 	);
