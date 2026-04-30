@@ -19,10 +19,14 @@ export class ServicesService {
     return this.serviceRepo.save(service);
   }
 
-  async findAll(): Promise<Service[]> {
-    return this.serviceRepo.find({ order: { sortOrder: 'ASC', createdAt: 'DESC' } });
+  async findAll(tags?: string): Promise<Service[]> {
+  const queryBuilder = this.serviceRepo.createQueryBuilder('service');
+  if (tags) {
+    const tagsArray = tags.split(',').map(t => t.trim());
+    queryBuilder.andWhere('service.tags && :tags', { tags: tagsArray });
   }
-
+  return queryBuilder.orderBy('service.sortOrder', 'ASC').addOrderBy('service.createdAt', 'DESC').getMany();
+}
   async findOne(id: number): Promise<Service> {
     const service = await this.serviceRepo.findOne({ where: { id } });
     if (!service) throw new NotFoundException('Услуга не найдена');
