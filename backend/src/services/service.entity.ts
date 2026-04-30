@@ -19,6 +19,9 @@ export class Service {
   @Column('text', { nullable: true })
   description: string;
 
+  @Column('simple-array', { nullable: true })
+  tags: string[];
+
   @ApiProperty({ required: false })
   @Column({ nullable: true })
   imageUrl: string;

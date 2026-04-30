@@ -11,10 +11,16 @@ export class CreateServiceDto {
   @IsString()
   slug: string;
 
-  @ApiPropertyOptional({ example: 'Описание услуги...' })
+  @ApiPropertyOptional({ example: 'Описание услуги' })
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiPropertyOptional({ type: [String], example: 'Укажите теги' })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 
   @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
   @IsOptional()
