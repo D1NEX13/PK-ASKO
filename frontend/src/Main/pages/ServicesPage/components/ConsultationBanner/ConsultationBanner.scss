@@ -1,0 +1,40 @@
+.consultation-banner {
+	background: #1e3a5f;
+	padding: 56px 96px;
+
+	&__title {
+		color: #fff;
+		font-size: 22px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		margin-bottom: 12px;
+		font-family: 'Geologica', sans-serif;
+	}
+
+	&__description {
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 15px;
+		margin: 0;
+		line-height: 1.6;
+		max-width: 480px;
+	}
+
+	&__btn-primary.ant-btn {
+		background: #fff;
+		border-color: #fff;
+		color: #0d1b2a;
+		font-weight: 700;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	&__btn-secondary.ant-btn {
+		background: transparent;
+		border-color: #fff;
+		color: #fff;
+		font-weight: 700;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+}
