@@ -13,19 +13,19 @@ const menuItems: MenuProps['items'] = [
 	},
 	{
 		key: '/services',
-		label: <Link to="/">Услуги</Link>,
+		label: <Link to="/services">Услуги</Link>,
 	},
 	{
 		key: '/about',
-		label: <Link to="/">О компании</Link>,
+		label: <a href="#about">О компании</a>,
 	},
 	{
 		key: '/info',
-		label: <Link to="/">Инфо</Link>,
+		label: <a href="#faq">Инфо</a>,
 	},
 	{
 		key: '/contacts',
-		label: <Link to="/">Контакты</Link>,
+		label: <a href="#map">Контакты</a>,
 	},
 ];
 

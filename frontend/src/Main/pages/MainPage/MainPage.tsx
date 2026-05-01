@@ -23,11 +23,26 @@ function MainPage(): ReactNode {
 			</Button>
 			<Title className="title">НАШИ УСЛУГИ</Title>
 			<Services />
-			<Title className="title">О КОМПАНИИ ПК АСКО</Title>
+			<Title
+				className="title"
+				id="about"
+			>
+				О КОМПАНИИ ПК АСКО
+			</Title>
 			<About />
-			<Title className="title">ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ</Title>
+			<Title
+				className="title"
+				id="faq"
+			>
+				ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ
+			</Title>
 			<FAQ />
-			<Title className="title">Наше местоположение</Title>
+			<Title
+				className="title"
+				id="map"
+			>
+				Наше местоположение
+			</Title>
 			<Map />
 		</>
 	);

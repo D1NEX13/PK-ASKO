@@ -5,6 +5,7 @@ import Profile from './pages/Profile/Profile';
 import Auth from './pages/AuthPage/Auth';
 import ProtectedRoute from '../Shared/ProtectedRoute/ProtectedRoute';
 import CatalogPage from './pages/CatalogPage/CatalogPage';
+import ServicePage from './pages/ServicesPage/ServicePage';
 
 export const router = createBrowserRouter([
 	{
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
 			{
 				element: <ProtectedRoute />,
 				children: [{ path: 'profile', element: <Profile /> }],
+			},
+			{
+				path: 'services',
+				element: <ServicePage />,
 			},
 		],
 	},
