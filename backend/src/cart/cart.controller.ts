@@ -42,23 +42,34 @@ export class CartController {
   }
 
   @Get()
-  @Public()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Получить корзину (товары с ценами)' })
-  @ApiQuery({ name: 'guestId', required: false, description: 'UUID гостя (только для неавторизованных)' })
-  @ApiResponse({ status: 200, description: 'Объект корзины', schema: { example: { id: 1, guestId: null, items: [{ id: 1, productId: 1, quantity: 2, product: { id: 1, name: 'Втулка', price: 450 } }], totalPrice: 900 } } })
-  async getCart(@Query('guestId') guestId: string, @Req() req) {
+    @Public()
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Получить корзину (товары с ценами)' })
+    @ApiQuery({ name: 'guestId', required: false, description: 'UUID гостя (только для неавторизованных)' })
+    @ApiResponse({ status: 200, description: 'Объект корзины', schema: { example: { id: 1, guestId: null, items: [{ id: 1, productId: 1, quantity: 2, product: { id: 1, name: 'Втулка', price: 450 } }], totalPrice: 900 } } })
+    async getCart(@Query('guestId') guestId: string, @Req() req) {
     let userId: number | undefined = undefined;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      try {
+        const token = authHeader.split(' ')[1];
+        try {
         const payload = this.jwtService.verify(token, { secret: this.configService.get('JWT_SECRET') });
         userId = payload.sub;
-      } catch (error) {}
+        } catch (error) {}
     }
-    return this.cartService.getCart(userId, guestId);
-  }
+    const cart = await this.cartService.getCart(userId, guestId);
+    if (!cart) {
+        return { items: [], totalPrice: 0 };
+    }
+    
+    const totalPrice = cart.items.reduce((sum, item) => {
+        const price = item.product?.price ?? 0;
+        return sum + price * item.quantity;
+    }, 0);
+    
+    const { userId: _, ...cartWithoutUserId } = cart;
+    return { ...cartWithoutUserId, totalPrice };
+    }
 
     @Get('count')
     @Public()
