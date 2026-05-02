@@ -60,6 +60,7 @@ export class CartService {
         cartId: cart.id,
         productId: dto.productId,
         quantity: dto.quantity,
+        
       });
       await this.cartItemRepository.save(cartItem);
       cart.items = cart.items ? [...cart.items, cartItem] : [cartItem];
