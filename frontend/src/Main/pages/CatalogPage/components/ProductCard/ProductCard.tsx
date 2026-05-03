@@ -2,6 +2,7 @@ import { ShoppingCartOutlined } from '@ant-design/icons';
 import { Button, Flex, Tag } from 'antd';
 import type { ReactNode } from 'react';
 import type { Product } from '../../../../../Shared/types/product';
+import './ProductCard.scss';
 
 interface ProductCardProps {
 	product: Product;
@@ -10,61 +11,55 @@ interface ProductCardProps {
 const API_URL = 'http://localhost:3000';
 
 function ProductCard({ product }: ProductCardProps): ReactNode {
-	const { name, article, price, inStock, images, partType } = product;
+	const { id, name, article, price, inStock, images, partType } = product;
 
 	const imageUrl = images && images.length > 0 ? `${API_URL}${images[0]}` : null;
+	const token = localStorage.getItem('token');
+	function handleAddToCart(productId: number) {
+		const addProduct = async () => {
+			try {
+				const response = await fetch(`${API_URL}/cart/items`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify({
+						productId: Number(productId),
+						quantity: 1,
+					}),
+				});
+				if (!response.ok) {
+					const error = await response.json();
+					console.error('Ошибка при добавлении товара:', error);
+					return;
+				}
+				console.log(`Товар ${name} добавлен в корзину`);
+			} catch (error) {
+				console.error('Ошибка при добавлении товара в корзину:', error);
+			}
+		};
+
+		addProduct();
+	}
 
 	return (
 		<Flex
 			vertical
-			style={{
-				background: '#fff',
-				borderRadius: 12,
-				overflow: 'hidden',
-				boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-				height: '100%',
-			}}
+			className="card-wrapper"
 		>
-			<div style={{ position: 'relative' }}>
+			<div className="card-image-wrapper">
 				{imageUrl ? (
 					<img
 						src={imageUrl}
 						alt={name}
-						style={{
-							width: '100%',
-							height: 200,
-							objectFit: 'contain',
-							display: 'block',
-						}}
+						className="card-image"
 					/>
 				) : (
-					<div
-						style={{
-							width: '100%',
-							height: 200,
-							background: '#f0f0f0',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							color: '#aaa',
-						}}
-					>
-						Нет фото
-					</div>
+					<div className="card-image-placeholder">Нет фото</div>
 				)}
 				<div
-					style={{
-						position: 'absolute',
-						top: 12,
-						left: 12,
-						background: inStock ? '#52c41a' : '#F97316',
-						color: '#fff',
-						fontSize: 11,
-						fontWeight: 700,
-						padding: '3px 10px',
-						borderRadius: 4,
-						letterSpacing: 0.5,
-					}}
+					className={`stock-badge ${inStock ? 'stock-badge--available' : 'stock-badge--backorder'}`}
 				>
 					{inStock ? 'В НАЛИЧИИ' : 'ПОД ЗАКАЗ'}
 				</div>
@@ -73,10 +68,10 @@ function ProductCard({ product }: ProductCardProps): ReactNode {
 			<Flex
 				vertical
 				gap={8}
-				style={{ padding: 16, flex: 1 }}
+				className="card-content"
 			>
-				<span style={{ fontSize: 12, color: '#888' }}>Арт: {article}</span>
-				<span style={{ fontWeight: 600, fontSize: 15, lineHeight: 1.3 }}>{name}</span>
+				<span className="card-article">Арт: {article}</span>
+				<span className="card-name">{name}</span>
 				{partType && (
 					<div>
 						<Tag>{partType}</Tag>
@@ -85,15 +80,14 @@ function ProductCard({ product }: ProductCardProps): ReactNode {
 				<Flex
 					justify="space-between"
 					align="center"
-					style={{ marginTop: 'auto', paddingTop: 8 }}
+					className="card-footer"
 				>
-					<span style={{ fontWeight: 700, fontSize: 18 }}>
-						{Number(price).toLocaleString('ru-RU')} ₽
-					</span>
+					<span className="card-price">{Number(price).toLocaleString('ru-RU')} ₽</span>
 					<Button
 						type="default"
 						icon={<ShoppingCartOutlined />}
-						style={{ color: '#4a90d9', borderColor: '#c8dff5', background: '#eef5fc' }}
+						className="card-add-button"
+						onClick={() => handleAddToCart(id)}
 					/>
 				</Flex>
 			</Flex>
