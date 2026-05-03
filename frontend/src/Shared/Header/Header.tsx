@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import './Header.scss';
 import personIcon from '../../assets/icons/person.svg';
 import cartIcon from '../../assets/icons/cart.svg';
+import { useCommonStore } from '../stores/Common.store';
 
 const menuItems: MenuProps['items'] = [
 	{
@@ -30,6 +31,8 @@ const menuItems: MenuProps['items'] = [
 ];
 
 function Header(): ReactNode {
+	const { openCart } = useCommonStore();
+
 	return (
 		<Layout.Header className="app-header">
 			<Link
@@ -57,8 +60,12 @@ function Header(): ReactNode {
 
 			<div className="app-header__icons">
 				<img
+					style={{ cursor: 'pointer' }}
 					src={cartIcon}
 					alt="Cart"
+					onClick={() => {
+						openCart(true);
+					}}
 				/>
 				<Link to="/profile">
 					<img

@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import Header from '../Shared/Header/Header';
 import { ConfigProvider, Layout } from 'antd';
 import Footer from '../Shared/Footer/Footer';
+import DrawerCart from '../Shared/DrawerCart/DrawerCart';
 
 function App(): ReactNode {
 	return (
@@ -24,6 +25,7 @@ function App(): ReactNode {
 				<Header />
 				<Outlet />
 				<Footer />
+				<DrawerCart />
 			</Layout>
 		</ConfigProvider>
 	);
