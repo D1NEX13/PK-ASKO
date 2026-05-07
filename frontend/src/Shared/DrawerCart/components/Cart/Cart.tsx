@@ -1,52 +1,32 @@
 import { Button, Divider, Flex, Typography } from 'antd';
 import { ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import CartItem from './components/CartItem';
-import { useCommonStore } from '../../../stores/Common.store';
-import type { Product } from '../../../types/product';
+import type { ICartResponse, ICartItem } from '../../DrawerCart';
 
-interface ICartItem {
-	id: number;
-	cartId: number;
-	productId: number;
-	quantity: number;
-	product: Product;
+interface ICart {
+	data: ICartResponse | null;
+	onRefresh: () => Promise<void>;
 }
 
-interface ICartResponse {
-	id: number;
-	items: ICartItem[];
-	totalPrice: number;
-}
-
-function Cart(): ReactNode {
+function Cart(props: ICart): ReactNode {
+	const { data, onRefresh } = props;
 	const token = localStorage.getItem('token');
-	const { isOpenCart } = useCommonStore();
 
-	const [cartData, setCartData] = useState<ICartResponse | null>(null);
-
-	const loadCart = useCallback(async () => {
+	const ClearCart = async () => {
 		const res = await fetch('http://localhost:3000/cart', {
-			method: 'GET',
+			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		});
 		if (res.ok) {
-			const data = await res.json();
-			setCartData(data);
+			await onRefresh();
 		} else {
 			const error = await res.json();
-			console.error('Ошибка загрузки корзины:', error);
+			console.error('Ошибка очистки корзины:', error);
 		}
-	}, [token]);
-	console.log(cartData);
-
-	useEffect(() => {
-		if (isOpenCart) {
-			loadCart();
-		}
-	}, [isOpenCart, loadCart]);
+	};
 
 	return (
 		<Flex
@@ -55,7 +35,7 @@ function Cart(): ReactNode {
 			style={{ height: '100%' }}
 		>
 			<Flex vertical={true}>
-				{cartData?.items?.map((item: ICartItem) => (
+				{data?.items?.map((item: ICartItem) => (
 					<CartItem
 						key={item.id}
 						id={item.id}
@@ -64,7 +44,7 @@ function Cart(): ReactNode {
 						price={Number(item.product.price)}
 						quantity={item.quantity}
 						image={item.product.images?.[0]}
-						onRefresh={loadCart}
+						onRefresh={onRefresh}
 					/>
 				))}
 			</Flex>
@@ -80,15 +60,17 @@ function Cart(): ReactNode {
 					align="center"
 				>
 					<Typography.Text>
-						Товаров: {cartData?.items.length}{' '}
-						{cartData?.items.length === 1 ? 'позиция' : 'позиции'}
+						Товаров: {data?.items.length}{' '}
+						{data?.items.length === 1 ? 'позиция' : 'позиции'}
 					</Typography.Text>
-					<Typography.Link
-						type="danger"
-						style={{ color: '#E53935' }}
+					<Button
+						type="text"
+						danger={true}
+						size="large"
+						onClick={ClearCart}
 					>
 						Очистить корзину
-					</Typography.Link>
+					</Button>
 				</Flex>
 
 				<Flex
@@ -100,7 +82,7 @@ function Cart(): ReactNode {
 						strong
 						style={{ fontSize: 16 }}
 					>
-						{/* {cartData?.totalPrice.toLocaleString('ru-RU')} ₽ */}
+						{data?.totalPrice.toLocaleString('ru-RU')} ₽
 					</Typography.Text>
 				</Flex>
 
@@ -115,9 +97,8 @@ function Cart(): ReactNode {
 				<Button
 					type="primary"
 					size="large"
-					block
 					icon={<ChevronRight size={18} />}
-					iconPosition="end"
+					iconPlacement="end"
 					style={{ marginTop: 8, letterSpacing: 1 }}
 				>
 					К ОФОРМЛЕНИЮ
@@ -125,7 +106,7 @@ function Cart(): ReactNode {
 
 				<Button
 					type="link"
-					block
+					href="/catalog"
 				>
 					Продолжить покупки
 				</Button>
