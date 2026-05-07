@@ -1,0 +1,20 @@
+.img-item {
+	width: 60px;
+	height: 60px;
+	object-fit: 'cover';
+	border-radius: 4;
+	flex-shrink: 0;
+}
+
+.img-empty {
+	width: 60px;
+	height: 60px;
+	background: '#f0f0f0';
+	border-radius: 4;
+	flex-shrink: 0;
+	display: 'flex';
+	align-items: 'center';
+	justify-content: 'center';
+	color: '#aaa';
+	font-size: 12;
+}

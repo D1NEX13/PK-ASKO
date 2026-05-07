@@ -1,6 +1,7 @@
 import { Button, Flex, Typography } from 'antd';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { type ReactNode } from 'react';
+import './CartItem.scss';
 
 const API_URL = 'http://localhost:3000';
 
@@ -40,6 +41,26 @@ function CartItem(props: CartItemProps): ReactNode {
 		}
 	}
 
+	async function HandleDeleteCartItem(itemId: number) {
+		try {
+			const response = await fetch(`${API_URL}/cart/items/${itemId}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					productId: Number(itemId),
+				}),
+			});
+			if (response.ok && onRefresh) {
+				await onRefresh();
+			}
+		} catch (error) {
+			console.error('Ошибка при удалении товара из корзины:', error);
+		}
+	}
+
 	return (
 		<Flex
 			gap={12}
@@ -49,31 +70,10 @@ function CartItem(props: CartItemProps): ReactNode {
 				<img
 					src={imageUrl}
 					alt={name}
-					style={{
-						width: 60,
-						height: 60,
-						objectFit: 'cover',
-						borderRadius: 4,
-						flexShrink: 0,
-					}}
+					className="img-item"
 				/>
 			) : (
-				<div
-					style={{
-						width: 60,
-						height: 60,
-						background: '#f0f0f0',
-						borderRadius: 4,
-						flexShrink: 0,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						color: '#aaa',
-						fontSize: 12,
-					}}
-				>
-					Нет фото
-				</div>
+				<div className="img-empty">Нет фото</div>
 			)}
 			<Flex
 				vertical={true}
@@ -127,7 +127,7 @@ function CartItem(props: CartItemProps): ReactNode {
 							size="small"
 							danger
 							icon={<Trash2 size={16} />}
-							onClick={() => handleChangeQuantity(id, 0)}
+							onClick={() => HandleDeleteCartItem(id)}
 						/>
 					</Flex>
 				</Flex>
