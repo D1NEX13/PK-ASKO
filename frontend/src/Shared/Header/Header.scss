@@ -1,14 +1,37 @@
 @use '../../styles/variables' as *;
 
+$header-gap: 16px;
+
 .app-header {
+	position: fixed;
+	z-index: 100;
+	top: $header-gap;
+	left: $header-gap;
+	right: $header-gap;
+	width: auto;
 	height: 64px;
 	display: flex;
 	justify-content: space-between;
-	width: 100%;
 	align-items: center;
 	gap: 24px;
 	padding-inline: 24px;
 	background: $color-surface;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(19, 52, 59, 0.12);
+	transition:
+		top 0.25s ease,
+		left 0.25s ease,
+		right 0.25s ease,
+		border-radius 0.25s ease,
+		box-shadow 0.25s ease;
+}
+
+.app-header--scrolled {
+	top: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0;
+	box-shadow: 0 2px 8px rgba(19, 52, 59, 0.1);
 }
 
 .app-header__menu.ant-menu {

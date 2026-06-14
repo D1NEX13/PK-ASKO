@@ -2,6 +2,7 @@ import { LockOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, message } from 'antd';
 import type { ReactNode } from 'react';
 import ProfileCard from '../../../../../Shared/ProfileCard/ProfileCard';
+import { useCommonStore } from '../../../../../Shared/stores/Common.store';
 
 interface ChangePasswordForm {
 	oldPassword: string;
@@ -11,9 +12,9 @@ interface ChangePasswordForm {
 
 function Security(): ReactNode {
 	const [form] = Form.useForm<ChangePasswordForm>();
+	const token = useCommonStore((s) => s.token);
 
 	const onFinish = async (values: ChangePasswordForm) => {
-		const token = localStorage.getItem('token');
 		const res = await fetch('http://localhost:3000/profile/change-password', {
 			method: 'POST',
 			headers: {

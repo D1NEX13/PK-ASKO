@@ -1,6 +1,7 @@
 import { Col, Row } from 'antd';
 import { useEffect, useState, type ReactNode } from 'react';
 import ServiceCard from './components/ServiceCard';
+import { useCommonStore } from '../../../../../Shared/stores/Common.store';
 
 export interface Service {
 	id: number;
@@ -12,7 +13,7 @@ export interface Service {
 
 function ServicesGrid(): ReactNode {
 	const [hoveredId, setHoveredId] = useState<number | null>(null);
-	const token = localStorage.getItem('token');
+	const token = useCommonStore((s) => s.token);
 
 	const [services, setServices] = useState<Service[]>([]);
 

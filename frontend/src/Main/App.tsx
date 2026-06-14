@@ -1,12 +1,18 @@
 import { Outlet } from 'react-router-dom';
 import './App.scss';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import Header from '../Shared/Header/Header';
 import { ConfigProvider, Layout } from 'antd';
 import Footer from '../Shared/Footer/Footer';
 import DrawerCart from '../Shared/DrawerCart/DrawerCart';
+import { useCommonStore } from '../Shared/stores/Common.store.tsx';
 
 function App(): ReactNode {
+	const fetchCart = useCommonStore((s) => s.fetchCart);
+
+	useEffect(() => {
+		void fetchCart();
+	}, [fetchCart]);
 	return (
 		<ConfigProvider
 			theme={{

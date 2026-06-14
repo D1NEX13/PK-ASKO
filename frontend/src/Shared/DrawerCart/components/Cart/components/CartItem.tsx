@@ -1,6 +1,7 @@
 import { Button, Flex, Typography } from 'antd';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { useCommonStore } from '../../../../stores/Common.store';
 import './CartItem.scss';
 
 const API_URL = 'http://localhost:3000';
@@ -12,29 +13,26 @@ interface CartItemProps {
 	price: number;
 	quantity: number;
 	image?: string;
-	onRefresh?: () => Promise<void>;
 }
 
 function CartItem(props: CartItemProps): ReactNode {
-	const { id, name, article, price, quantity, image, onRefresh } = props;
+	const { id, name, article, price, quantity, image } = props;
 	const imageUrl = image ? `${API_URL}${image}` : null;
-	const token = localStorage.getItem('token');
+	const token = useCommonStore((s) => s.token);
+	const fetchCart = useCommonStore((s) => s.fetchCart);
 
-	async function handleChangeQuantity(productId: number, newQuantity: number) {
+	async function handleChangeQuantity(itemId: number, newQuantity: number) {
 		try {
-			const response = await fetch(`${API_URL}/cart/items/${productId}`, {
+			const response = await fetch(`${API_URL}/cart/items/${itemId}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					productId: Number(productId),
-					quantity: newQuantity,
-				}),
+				body: JSON.stringify({ quantity: newQuantity }),
 			});
-			if (response.ok && onRefresh) {
-				await onRefresh();
+			if (response.ok) {
+				await fetchCart();
 			}
 		} catch (error) {
 			console.error('Ошибка при обновлении количества товара в корзине:', error);
@@ -46,15 +44,11 @@ function CartItem(props: CartItemProps): ReactNode {
 			const response = await fetch(`${API_URL}/cart/items/${itemId}`, {
 				method: 'DELETE',
 				headers: {
-					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					productId: Number(itemId),
-				}),
 			});
-			if (response.ok && onRefresh) {
-				await onRefresh();
+			if (response.ok) {
+				await fetchCart();
 			}
 		} catch (error) {
 			console.error('Ошибка при удалении товара из корзины:', error);

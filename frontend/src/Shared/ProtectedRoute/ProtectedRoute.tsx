@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useCommonStore } from '../stores/Common.store';
 
 function ProtectedRoute() {
-	const token = localStorage.getItem('token');
+	const token = useCommonStore((s) => s.token);
 	return token ? (
 		<Outlet />
 	) : (

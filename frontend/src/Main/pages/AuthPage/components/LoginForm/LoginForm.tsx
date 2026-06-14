@@ -3,6 +3,7 @@ import type { IAuth } from '../../../../../Shared/types/auth';
 import { Button, Form, Input, Divider } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useCommonStore } from '../../../../../Shared/stores/Common.store';
 
 interface LoginFormProps {
 	onSwitch: () => void;
@@ -19,7 +20,7 @@ function LoginForm(props: LoginFormProps): ReactNode {
 		});
 		if (res.ok) {
 			const data = await res.json();
-			localStorage.setItem('token', data.access_token);
+			setToken(data.access_token);
 			navigate('/profile');
 		} else {
 			const error = await res.json();
@@ -29,6 +30,7 @@ function LoginForm(props: LoginFormProps): ReactNode {
 	const { onSwitch } = props;
 	const [form] = Form.useForm<IAuth>();
 	const navigate = useNavigate();
+	const setToken = useCommonStore((s) => s.setToken);
 
 	const validateMessages = {
 		required: "Поле '${name}' обязательно для заполнения!",
