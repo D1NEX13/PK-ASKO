@@ -2,16 +2,16 @@ import { Button, Divider, Flex, Typography } from 'antd';
 import { ChevronRight } from 'lucide-react';
 import { type ReactNode } from 'react';
 import CartItem from './components/CartItem';
-import type { ICartResponse, ICartItem } from '../../DrawerCart';
+import type { ICart, ICartItem } from '../../../types/cart';
+import { useCommonStore } from '../../../stores/Common.store';
 
-interface ICart {
-	data: ICartResponse | null;
-	onRefresh: () => Promise<void>;
+interface ICartProps {
+	data: ICart | null;
 }
 
-function Cart(props: ICart): ReactNode {
-	const { data, onRefresh } = props;
-	const token = localStorage.getItem('token');
+function Cart({ data }: ICartProps): ReactNode {
+	const token = useCommonStore((s) => s.token);
+	const fetchCart = useCommonStore((s) => s.fetchCart);
 
 	const ClearCart = async () => {
 		const res = await fetch('http://localhost:3000/cart', {
@@ -21,7 +21,7 @@ function Cart(props: ICart): ReactNode {
 			},
 		});
 		if (res.ok) {
-			await onRefresh();
+			await fetchCart();
 		} else {
 			const error = await res.json();
 			console.error('Ошибка очистки корзины:', error);
@@ -44,7 +44,6 @@ function Cart(props: ICart): ReactNode {
 						price={Number(item.product.price)}
 						quantity={item.quantity}
 						image={item.product.images?.[0]}
-						onRefresh={onRefresh}
 					/>
 				))}
 			</Flex>

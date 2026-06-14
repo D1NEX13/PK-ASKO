@@ -6,11 +6,12 @@ import type { IUser } from '../../../Shared/types/user';
 import Orders from './components/Orders/Orders';
 import Security from './components/Security/Security';
 import { ProfileSections } from '../../../../../frontend/src/Shared/types/profile';
+import { useCommonStore } from '../../../Shared/stores/Common.store';
 
 type ProfileSections = (typeof ProfileSections)[keyof typeof ProfileSections];
 
 function Profile(): ReactNode {
-	const token = localStorage.getItem('token');
+	const token = useCommonStore((s) => s.token);
 
 	const [userInfo, setUserInfo] = useState<IUser | null>(null);
 	const [activeSection, setActiveSection] = useState<ProfileSections>(

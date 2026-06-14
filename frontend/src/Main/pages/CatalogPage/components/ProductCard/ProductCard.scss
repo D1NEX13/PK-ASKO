@@ -78,3 +78,14 @@
 	border-color: #c8dff5 !important;
 	background: #eef5fc !important;
 }
+
+.card-qty {
+	user-select: none;
+}
+
+.card-qty-value {
+	min-width: 20px;
+	text-align: center;
+	font-weight: 600;
+	font-size: 15px;
+}

@@ -11,7 +11,7 @@ function Catalog(): ReactNode {
 
 	useEffect(() => {
 		const fetchProducts = async () => {
-			const res = await fetch('http://localhost:3000/products');
+			const res = await fetch('http://localhost:3000/products?limit=4');
 			const data = await res.json();
 			setProducts(data.items);
 			setLoading(false);

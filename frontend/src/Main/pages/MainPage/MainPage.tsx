@@ -8,6 +8,7 @@ import Services from './components/Services/Services';
 import About from './components/About/About';
 import FAQ from './components/FAQ/FAQ';
 import Map from './components/Map/Map';
+import { Link } from 'react-router-dom';
 
 function MainPage(): ReactNode {
 	return (
@@ -15,12 +16,14 @@ function MainPage(): ReactNode {
 			<Slider />
 			<Title className="title">КАТАЛОГ ПРОДУКЦИИ</Title>
 			<Catalog />
-			<Button
-				className="button"
-				size="large"
-			>
-				Смотреть весь каталог
-			</Button>
+			<Link to="/catalog">
+				<Button
+					className="button"
+					size="large"
+				>
+					Смотреть весь каталог
+				</Button>
+			</Link>
 			<Title className="title">НАШИ УСЛУГИ</Title>
 			<Services />
 			<Title

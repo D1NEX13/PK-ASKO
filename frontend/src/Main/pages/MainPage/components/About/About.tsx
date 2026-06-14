@@ -1,5 +1,5 @@
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Flex, List, Typography } from 'antd';
+import { Card, Flex, List, Typography } from 'antd';
 import Title from 'antd/es/typography/Title';
 import type { ReactNode } from 'react';
 import ceh from '../../../../../assets/puctures/ceh.jpg';
@@ -55,13 +55,13 @@ function About(): ReactNode {
 						/>
 					)}
 				/>
-				<Button
-					type="primary"
-					size="large"
-					style={{ width: 'fit-content', marginTop: 24 }}
-				>
-					Подробнее о нас
-				</Button>
+				{/*<Button*/}
+				{/*	type="primary"*/}
+				{/*	size="large"*/}
+				{/*	style={{ width: 'fit-content', marginTop: 24 }}*/}
+				{/*>*/}
+				{/*	Подробнее о нас*/}
+				{/*</Button>*/}
 			</div>
 			<div className="about__image">
 				<img

@@ -1,6 +1,6 @@
-import { Layout, Menu, Typography } from 'antd';
+import { Badge, Layout, Menu, Typography } from 'antd';
 import type { MenuProps } from 'antd';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import './Header.scss';
 import personIcon from '../../assets/icons/person.svg';
@@ -32,9 +32,18 @@ const menuItems: MenuProps['items'] = [
 
 function Header(): ReactNode {
 	const { openCart } = useCommonStore();
+	const [scrolled, setScrolled] = useState(false);
+	const cartCounter = useCommonStore((s) => s.cartData?.items?.length ?? 0);
+
+	useEffect(() => {
+		const onScroll = () => setScrolled(window.scrollY > 0);
+		onScroll();
+		window.addEventListener('scroll', onScroll, { passive: true });
+		return () => window.removeEventListener('scroll', onScroll);
+	}, []);
 
 	return (
-		<Layout.Header className="app-header">
+		<Layout.Header className={`app-header${scrolled ? ' app-header--scrolled' : ''}`}>
 			<Link
 				to="/"
 				className="app-header__brand"
@@ -59,14 +68,16 @@ function Header(): ReactNode {
 			</div>
 
 			<div className="app-header__icons">
-				<img
-					style={{ cursor: 'pointer' }}
-					src={cartIcon}
-					alt="Cart"
-					onClick={() => {
-						openCart(true);
-					}}
-				/>
+				<Badge count={cartCounter ?? 0}>
+					<img
+						style={{ cursor: 'pointer' }}
+						src={cartIcon}
+						alt="Cart"
+						onClick={() => {
+							openCart(true);
+						}}
+					/>
+				</Badge>
 				<Link to="/profile">
 					<img
 						src={personIcon}
